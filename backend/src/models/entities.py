@@ -38,3 +38,4 @@ class PublishedReport:
  review_id:str
  title:str
  created_at:str=""
+ snapshot:dict[str,Any]=field(default_factory=dict)

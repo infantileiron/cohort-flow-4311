@@ -1,7 +1,33 @@
 export type Dataset={id:string;name:string;source:string;row_count:number;learners:number;weeks:number[]};
 export type Cohort={id:string;name:string;dataset_id:string;observation_end:number;include_completed:boolean};
 export type RetentionCell={age:number;calendar_week:number;eligible:number;observed:number;active:number;missing:number;censored:number;retention:number|null};
-export type Run={id:string;cohort_id:string;status:string;error:string;result:{learners:number;events:number;observation_end:number;cohorts:{cohort_week:number;size:number;cells:RetentionCell[]}[];markov:{states:string[];counts:number[][];matrix:number[][];expected_weeks:number[]|null;absorption:number[][]|null;identifiable:boolean;warning:string};limitations:string[];checksum:string}};
-export type Review={id:string;run_id:string;comment:string;status:string;reviewer:string};
-export type Report={id:string;run_id:string;review_id:string;title:string};
+export type Outcome={
+  completion_probability:number|null;
+  loss_probability:number|null;
+  permanent_probability:number|null;
+  expected_weeks:number|null;
+  probabilities_identifiable:boolean;
+  duration_identifiable:boolean;
+  reason:'identified'|'no_observation'|'insufficient_observation'|'permanent_retention';
+  outgoing_pairs:number;
+  unobserved_downstream?:string[];
+};
+export type Markov={
+  states:string[];
+  transition_states:string[];
+  counts:number[][];
+  observed_pairs?:number[];
+  matrix:(number|null)[][];
+  outcomes?:Record<string,Outcome>;
+  expected_weeks:(number|null)[]|null;
+  absorption:(number|null)[][]|null;
+  identifiable:boolean;
+  all_durations_finite?:boolean;
+  rule_version?:string;
+  warning:string;
+};
+export type RunResult={learners:number;events:number;observation_end:number;cohorts:{cohort_week:number;size:number;cells:RetentionCell[]}[];markov:Markov;limitations:string[];checksum:string;rule_version?:string};
+export type Run={id:string;cohort_id:string;status:string;error:string;stale?:boolean;current_rule_version?:string;result:RunResult};
+export type Review={id:string;run_id:string;comment:string;status:string;reviewer:string;stale?:boolean;rule_version?:string};
+export type Report={id:string;run_id:string;review_id:string;title:string;rule_version?:string;legacy_rule?:boolean};
 export type User={email:string;name:string;role:string};
